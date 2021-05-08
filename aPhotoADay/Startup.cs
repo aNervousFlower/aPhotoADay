@@ -12,6 +12,9 @@ using aPhotoADay.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using aPhotoADay.Services;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace aPhotoADay
 {
@@ -33,7 +36,11 @@ namespace aPhotoADay
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
-           services.AddRazorPages();
+            services.AddRazorPages();
+            services.AddScoped<IDailyPhotoService, DailyPhotoService>();
+            services.AddSingleton<IFileProvider>(
+                new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/imageFiles"))
+           );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

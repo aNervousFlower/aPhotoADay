@@ -69,3 +69,26 @@ body {
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
 }
+
+/* aPhotoADay styles
+-------------------------------------------------- */
+.centerList {
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.photoView {
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.flexContainer {
+  display: flex;
+  width: 100%;
+}
+
+.flexItem {
+  flex-grow: 1;
+}

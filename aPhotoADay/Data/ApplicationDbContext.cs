@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using aPhotoADay.Models;
 
 namespace aPhotoADay.Data
 {
@@ -12,5 +13,6 @@ namespace aPhotoADay.Data
             : base(options)
         {
         }
+        public DbSet<DailyPhoto> Photos { get; set; }
     }
 }

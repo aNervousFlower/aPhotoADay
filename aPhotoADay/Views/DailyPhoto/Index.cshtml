@@ -1,0 +1,41 @@
+@using aPhotoADay.Models
+@model DailyPhotoViewModel
+
+@{
+    ViewData["Title"] = "View Your Images";
+}
+
+<div class="panel panel-default image-panel">
+    <div class="flexContainer">
+        <div class="flexItem">
+            <p class="text-left">
+                <a class="nav-link text-dark" asp-area="" asp-controller="DailyPhoto"
+                    asp-action="Index" asp-route-id='@Model.AdjustDateString(-1)'><<</a>
+            </p>
+        </div>
+        <div class="photoView text-center">
+            <h2 class="display-5">@Model.PhotoDate.ToString("MMMM d, yyyy")</h2>
+            @if (Model.HasDailyPhoto == true)
+            {        
+                <img style="max-width:400px;" src="@Model.Photo.PhotoPath" alt="@Model.Photo.PhotoPath"
+                    asp-append-version="true" />
+                <p style="padding-top:10px;">@Model.Photo.Comment</p>
+
+            }
+            @if (Model.HasDailyPhoto == false)
+            {
+                @await Html.PartialAsync("UploadPhotoPartial", new DailyPhoto { PhotoDate = Model.PhotoDate });
+            }
+        </div>
+        <div class="flexItem">
+            @if (!Model.OnCurrentDay())
+            {
+                <p class="text-right">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="DailyPhoto"
+                        asp-action="Index" asp-route-id='@Model.AdjustDateString(1)'>>></a>
+                </p>
+            }
+        </div>
+    </div>
+
+</div>

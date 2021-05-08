@@ -1,0 +1,12 @@
+@model DailyPhoto
+
+<form asp-action="UploadPhoto" method="POST" enctype="multipart/form-data">
+    <label for="photoFile">Select a photo:</label>
+    <input type="file" name="photoFile" accept="image/*" style="margin-bottom: 10px" />
+    <br />
+    <label asp-for="Comment">Add a comment:</label>
+    <input asp-for="Comment">
+    <input type="hidden" asp-for="PhotoDate" value="@Model.PhotoDate">
+    <br />
+    <button type="submit" style="margin-top: 10px">Upload</button>
+</form>
