@@ -17,7 +17,7 @@ namespace aPhotoADay.UnitTests
         [Fact]
         public async Task AddDailyPhotoAsync_Test()
         {
-            //Arrange
+            // Arrange
             var mockEnvironment = new Mock<IWebHostEnvironment>();
             mockEnvironment
                 .Setup(m => m.EnvironmentName)
@@ -32,7 +32,8 @@ namespace aPhotoADay.UnitTests
                 mockService.Setup(m => m.SavePhoto(It.IsAny<IFormFile>(), It.IsAny<string>())).ReturnsAsync(true);
                 
                 var file = getMockFile();
-                //Act
+
+                // Act
                 await mockService.Object.AddDailyPhotoAsync(new DailyPhoto
                 {
                     PhotoDate = new DateTimeOffset(2021, 1, 1, 0, 0, 0, TimeSpan.Zero).Date,
@@ -74,6 +75,54 @@ namespace aPhotoADay.UnitTests
             fileMock.Setup(_ => _.Length).Returns(ms.Length);
 
             return fileMock.Object;
+        }
+        
+        [Fact]
+        public async Task GetDailyPhotoAsync_Test()
+        {
+            // Arrange
+            var mockEnvironment = new Mock<IWebHostEnvironment>();
+            mockEnvironment
+                .Setup(m => m.EnvironmentName)
+                .Returns("Hosting:UnitTestEnvironment");
+
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase(databaseName: "Test_GetDailyPhoto").Options;
+                
+            Guid id = Guid.NewGuid();
+            DailyPhoto testPhoto = new DailyPhoto
+            {
+                Id = id,
+                PhotoDate = new DateTimeOffset(2021, 1, 1, 0, 0, 0, TimeSpan.Zero).Date,
+                PhotoPath = @"\imageFiles\" + id + ".jpg",
+                Comment = "Test Comment"
+            };
+            
+            using (var context = new ApplicationDbContext(options))
+            {
+                context.Photos.Add(testPhoto);
+                await context.SaveChangesAsync();
+            }
+
+            using (var context = new ApplicationDbContext(options))
+            {
+                var mockService = new Mock<DailyPhotoService>(MockBehavior.Strict, context, mockEnvironment.Object);
+
+                // Act
+                var results = await mockService.Object.GetDailyPhotoAsync(new DateTimeOffset(2021, 1, 1, 0, 0, 0, TimeSpan.Zero).Date);
+                
+                // Assert
+                Assert.Equal(1, results.Length);
+
+                var savedPhoto = results[0];
+
+                Assert.Equal(id, savedPhoto.Id);
+                Assert.Equal("Test Comment", savedPhoto.Comment);
+                Assert.Equal(@"\imageFiles\" + id + ".jpg", savedPhoto.PhotoPath);
+
+                var difference = new DateTimeOffset(2021, 1, 1, 0, 0, 0, TimeSpan.Zero).Date - savedPhoto.PhotoDate;
+                Assert.True(difference < TimeSpan.FromSeconds(1));
+            }
         }
     }
 }
