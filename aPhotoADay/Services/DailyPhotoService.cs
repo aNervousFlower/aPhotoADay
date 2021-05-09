@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using aPhotoADay.Data;
 using aPhotoADay.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using System.IO;
@@ -15,12 +14,10 @@ namespace aPhotoADay.Services
     public class DailyPhotoService : IDailyPhotoService
     {
         private readonly ApplicationDbContext _context;
-        private readonly IFileProvider _fileProvider;
         private readonly IWebHostEnvironment _hostingEnv;
-        public DailyPhotoService(ApplicationDbContext context, IFileProvider fileProvider, IWebHostEnvironment env)
+        public DailyPhotoService(ApplicationDbContext context, IWebHostEnvironment env)
         {
             _context = context;
-            _fileProvider = fileProvider;
             _hostingEnv = env;
         }
 
@@ -39,10 +36,8 @@ namespace aPhotoADay.Services
                 var webPath = _hostingEnv.WebRootPath;
                 var pathToSave = @"\imageFiles\" + newFileName;
                 var path = Path.Combine("", webPath + pathToSave);
-                using (var stream = new FileStream(path, FileMode.Create))
-                {
-                    await photoFile.CopyToAsync(stream);
-                }
+
+                await SavePhoto(photoFile, path);
 
                 newPhoto.Id = photoId;
                 newPhoto.PhotoPath = pathToSave;
@@ -54,6 +49,15 @@ namespace aPhotoADay.Services
             }
 
             return false;
+        }
+
+        public virtual async Task<bool> SavePhoto(IFormFile photoFile, string path)
+        {
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                await photoFile.CopyToAsync(stream);
+            }
+            return true;
         }
     }
 }
