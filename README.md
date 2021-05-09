@@ -1,5 +1,6 @@
 # aPhotoADay
-Record a photo a day to watch something you love change over time, or remember the highlights of your days
+Record a photo a day to watch something you love change over time, or remember a highlights of your day
+Use the navigation bar at the top of the page to upload and/or view your daily photos. The << and >> symbols on the sides of this page will take you back or forward a day. You can also skip to a specific day by changing the date code in the URL (YYYYMMDD format). Selecting a date in the future will default to the current date, as at this time you cannot add photos for future dates.
 
 # TODO
 Improve error handling when photo fails to upload
